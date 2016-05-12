@@ -25,9 +25,9 @@ public class Grid {
 
     public void print() {
         for (int i = 0; i < gridMap.length; i++) {
-            System.out.print("");
+            System.out.println();
             for (int j = 0; j < gridMap[i].length; j++) {
-
+                System.out.print(gridMap[i][j]);
             }
         }
     }
