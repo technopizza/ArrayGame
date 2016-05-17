@@ -29,13 +29,10 @@ public class ArrayGame {
         }
     }
 
-    public void moveEntities(Grid g, ArrayList<Entity> entities) {
+    public void moveEntities(Grid g, ArrayList<Entity> entities, char[] direction) {
 
         for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).isAlive()) {
-                g.setCharAt(entities.get(i).getPositionX(), entities.get(i).getPositionY(), entities.get(i).getSymbol());
-            }
-
+            entities.get(i).move(g, direction);
         }
 
     }
