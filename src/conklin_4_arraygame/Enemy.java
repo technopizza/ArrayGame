@@ -11,8 +11,8 @@ package conklin_4_arraygame;
  */
 public class Enemy extends Creature {
 
-    Enemy(char symbol, int health, int damage, int positionX, int positionY) {
-        super(symbol, health, damage, positionX, positionY);
+    Enemy(char symbol, int health, int damage, int positionX, int positionY, boolean alive) {
+        super(symbol, health, damage, positionX, positionY, alive);
     }
 
 }

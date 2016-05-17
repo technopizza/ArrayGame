@@ -14,7 +14,47 @@ public abstract class Entity {
     char symbol;
     int positionX;
     int positionY;
+    boolean alive;
+    
+    public void move(Grid grid, char[] direction){
+        for (int i = 0; i < direction.length; i++) {
+            switch (direction[i]) {
+                case 'N':
+                    if (!((getPositionY() - 1) < 0)) {
+                        setPositionY(getPositionY() - 1);
+                    }
 
+                    break;
+                case 'S':
+                    if (!((getPositionY() + 1) > grid.getHeight() - 1)) {
+                        setPositionY(getPositionY() + 1);
+                    }
+                    break;
+                case 'E':
+                    if (!((getPositionX() + 1) > grid.getWidth() - 1)) {
+                        setPositionX(getPositionX() + 1);
+                    }
+                    break;
+                case 'W':
+                    if (!((getPositionX() - 1) < 0)) {
+                        setPositionX(getPositionX() - 1);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            
+        }
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
+    }
+    
     public char getSymbol() {
         return symbol;
     }

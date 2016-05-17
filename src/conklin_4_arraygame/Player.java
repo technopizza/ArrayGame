@@ -14,8 +14,8 @@ public class Player extends Creature {
     private int enemiesKilled;
     private int treasuresCollected;
 
-    Player(char symbol, int health, int damage, int positionX, int positionY) {
-        super(symbol, health, damage, positionX, positionY);
+    Player(char symbol, int health, int damage, int positionX, int positionY, boolean alive) {
+        super(symbol, health, damage, positionX, positionY, alive);
         enemiesKilled = 0;
         treasuresCollected = 0;
     }

@@ -16,17 +16,20 @@ public class Creature extends Entity {
 
     private int health;
     private int damage;
-    private boolean alive;
+    
 
-    public Creature(char symbol, int health, int damage, int positionX, int positionY) {
+    public Creature(char symbol, int health, int damage, int positionX, int positionY, boolean alive) {
         this.symbol = symbol;
         this.positionX = positionX;
         this.positionY = positionY;
         this.health = health;
         this.damage = damage;
-        this.alive = true;
+        this.alive = alive;
     }
 
+      
+    
+    
     public int getPositionXPrevious() {
         return positionXPrevious;
     }
