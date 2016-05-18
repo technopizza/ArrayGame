@@ -18,10 +18,10 @@ public class ArrayGame {
     Scanner scanner = new Scanner(System.in);
     Random random = new Random();
 
-    ArrayList players = new ArrayList();
-    ArrayList enemies = new ArrayList();
-    ArrayList traps = new ArrayList();
-    ArrayList treasures = new ArrayList();
+    ArrayList<Entity> players = new ArrayList();
+    ArrayList<Entity> enemies = new ArrayList();
+    ArrayList<Entity> traps = new ArrayList();
+    ArrayList<Entity> treasures = new ArrayList();
 
     public static void printEmptyLines(int n) {
         for (int i = 0; i < n; i++) {
@@ -36,7 +36,7 @@ public class ArrayGame {
         }
 
     }
-    
+
     public void updatePositions(Grid g, ArrayList<Entity> entities) {
 
         for (int i = 0; i < entities.size(); i++) {
@@ -48,8 +48,55 @@ public class ArrayGame {
 
     }
 
+    public char[] userInputDirection() {
+        System.out.println("Which direction do you want to travel?");
+        String output = scanner.next();
+        output = output.toUpperCase();
+        return output.toCharArray();
+    }
+
+    public char[] getFollowDirection(Entity player, Entity enemy) {
+        String direction = "";
+        if (player.getPositionX() > enemy.getPositionX()) {
+            direction += "E";
+        } else if (player.getPositionX() < enemy.getPositionX()) {
+            direction += "W";
+        }
+        if (player.getPositionY() > enemy.getPositionY()) {
+            direction += "S";
+        } else if (player.getPositionY() < enemy.getPositionY()) {
+            direction += "N";
+        }
+
+        return direction.toCharArray();
+    }
+
+    public void squadMovement(Grid g, Entity player, ArrayList<Entity> squad) {
+        for (int i = 0; i < squad.size(); i++) {
+            squad.get(i).move(g, getFollowDirection(player, squad.get(i)));
+
+        }
+    }
+
+    public boolean isIntersect(Entity entity1, Entity entity2) {
+        if ((entity1.getPositionX() == entity2.getPositionX()) && (entity1.getPositionY() == entity2.getPositionY())
+                && (entity1.isAlive() && entity2.isAlive())) {
+            return true;
+        }
+        return false;
+    }
+
+    
+    
     public void update(Grid g) {
 
+        char[] direction = userInputDirection();
+        moveEntities(g, players, direction);
+        squadMovement(g, players.get(0), enemies);
+        for (int i = 0; i < enemies.size(); i++) {
+            char e = direction[i];
+            
+        }
         
         
         updatePositions(g, players);
