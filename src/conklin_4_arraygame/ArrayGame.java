@@ -18,10 +18,10 @@ public class ArrayGame {
     Scanner scanner = new Scanner(System.in);
     Random random = new Random();
 
-    ArrayList<Entity> players = new ArrayList();
-    ArrayList<Entity> enemies = new ArrayList();
-    ArrayList<Entity> traps = new ArrayList();
-    ArrayList<Entity> treasures = new ArrayList();
+    Player player = new Player('@', 5, 1, 0, 0, true);
+    ArrayList<Enemy> enemies = new ArrayList();
+    ArrayList<Trap> traps = new ArrayList();
+    ArrayList<Treasure> treasures = new ArrayList();
 
     public static void printEmptyLines(int n) {
         for (int i = 0; i < n; i++) {
@@ -37,11 +37,11 @@ public class ArrayGame {
 
     }
 
-    public void updatePositions(Grid g, ArrayList<Entity> entities) {
+    public void updatePositions(Grid g, Entity[] entities) {
 
-        for (int i = 0; i < entities.size(); i++) {
-            if (entities.get(i).isAlive()) {
-                g.setCharAt(entities.get(i).getPositionX(), entities.get(i).getPositionY(), entities.get(i).getSymbol());
+        for (int i = 0; i < entities.length; i++) {
+            if (entities[i].isAlive()) {
+                g.setCharAt(entities[i].getPositionX(), entities[i].getPositionY(), entities[i].getSymbol());
             }
 
         }
@@ -71,9 +71,9 @@ public class ArrayGame {
         return direction.toCharArray();
     }
 
-    public void squadMovement(Grid g, Entity player, ArrayList<Entity> squad) {
-        for (int i = 0; i < squad.size(); i++) {
-            squad.get(i).move(g, getFollowDirection(player, squad.get(i)));
+    public void squadMovement(Grid g, Entity player, Entity[] squad) {
+        for (int i = 0; i < squad.length; i++) {
+            squad[i].move(g, getFollowDirection(player, squad[i]));
 
         }
     }
@@ -86,23 +86,35 @@ public class ArrayGame {
         return false;
     }
 
-    
+    public void calculateDamage(Player player, ArrayList<Enemy> enemies, ArrayList<Trap> traps){
+        for (int i = 0; i < enemies.size(); i++) {
+            if(isIntersect(player, enemies.get(i))){
+                enemies.get(i).setAlive(false);
+                player.setHealth(player.getHealth() - enemies.get(i).getDamage());
+            }
+            for (int j = 0; j < traps.size(); j++) {
+                if(isIntersect(traps.get(j), enemies.get(i))){
+                    traps.get(j).setAlive(false);
+                    enemies.get(i).setHealth(enemies.get(i).getHealth() - traps.get(j).getDamage());
+                }
+                
+            }
+            
+        }
+    }
     
     public void update(Grid g) {
 
         char[] direction = userInputDirection();
-        moveEntities(g, players, direction);
-        squadMovement(g, players.get(0), enemies);
-        for (int i = 0; i < enemies.size(); i++) {
-            char e = direction[i];
-            
-        }
+        player.move(g, direction);
+        squadMovement(g, player, enemies.toArray());
+        calculateDamage(player, enemies, traps);
         
         
-        updatePositions(g, players);
-        updatePositions(g, enemies);
-        updatePositions(g, traps);
-        updatePositions(g, treasures);
+        g.setCharAt(player.getPositionX(), player.getPositionY(), player.getSymbol());
+        updatePositions(g, enemies.toArray());
+        updatePositions(g, traps.toArray());
+        updatePositions(g, treasures.toArray());
 
     }
 
