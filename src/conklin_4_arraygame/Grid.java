@@ -35,7 +35,7 @@ public class Grid {
             System.out.println();
             System.out.print("┃");
             for (int j = 0; j < gridMap[i].length; j++) {
-                System.out.print(gridMap[i][j]);
+                System.out.print(gridMap[i][j] + " ");
             }
             System.out.print("┃");
         }
