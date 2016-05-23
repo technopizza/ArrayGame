@@ -19,7 +19,11 @@ public class ArrayGame {
     Random random = new Random();
     boolean playgame;
 
-    Player player = new Player('@', 5, 1, 0, 0, true);
+    int numberOfEnemies = 10;
+    int numberOfTraps = 10;
+    int numberOfTreasures = 10;
+
+    Player player = new Player('@', 5, 1, true);
     ArrayList<Enemy> enemies = new ArrayList();
     ArrayList<Trap> traps = new ArrayList();
     ArrayList<Treasure> treasures = new ArrayList();
@@ -39,13 +43,10 @@ public class ArrayGame {
 
     }
 
-    public void updatePositions(Grid g, Entity[] entities) {
+    public void updatePositions(Grid g, Entity entity) {
 
-        for (int i = 0; i < entities.length; i++) {
-            if (entities[i].isAlive()) {
-                g.setCharAt(entities[i].getPositionX(), entities[i].getPositionY(), entities[i].getSymbol());
-            }
-
+        if (entity.isAlive()) {
+            g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
         }
 
     }
@@ -73,11 +74,11 @@ public class ArrayGame {
         return direction.toCharArray();
     }
 
-    public void squadMovement(Grid g, Entity player, Entity[] squad) {
-        for (int i = 0; i < squad.length; i++) {
-            squad[i].move(g, getFollowDirection(player, squad[i]));
+    public void squadMovement(Grid g, Entity player, Entity squadmember) {
+        
+            squadmember.move(g, getFollowDirection(player, squadmember));
 
-        }
+        
     }
 
     public boolean isIntersect(Entity entity1, Entity entity2) {
@@ -109,16 +110,39 @@ public class ArrayGame {
 
         char[] direction = userInputDirection();
         player.move(g, direction);
-        squadMovement(g, player, (Enemy[]) enemies.toArray());
+        for (int i = 0; i < numberOfEnemies; i++) {
+            squadMovement(g, player, enemies.get(i));
+            
+        }
+        
         calculateDamage(player, enemies, traps);
 
-        g.setCharAt(player.getPositionX(), player.getPositionY(), player.getSymbol());
-        updatePositions(g, (Enemy[]) enemies.toArray());
-        updatePositions(g, (Trap[]) traps.toArray());
-        updatePositions(g, (Treasure[]) treasures.toArray());
-
+        
     }
 
+    public void updateChars(Grid g) {
+
+        
+
+        g.setCharAt(player.getPositionX(), player.getPositionY(), player.getSymbol());
+        for (int i = 0; i < numberOfEnemies; i++) {
+
+            updatePositions(g, enemies.get(i));
+
+        }
+        for (int i = 0; i < numberOfTreasures; i++) {
+
+            updatePositions(g, treasures.get(i));
+
+        }
+
+        for (int i = 0; i < numberOfTraps; i++) {
+
+            updatePositions(g, traps.get(i));
+
+        }
+    }
+    
     public void endGame(boolean win) {
         printEmptyLines(10);
         if (win) {
@@ -140,41 +164,65 @@ public class ArrayGame {
         System.out.println("Health: " + p.getHealth() + "\nEnemies Killed: " + p.getEnemiesKilled() + "\nTreasures Collected: " + p.getTreasuresCollected());
     }
 
-    public void assignCoords(Grid g, Entity[] e) {
+    public void assignCoords(Grid g, Entity e) {
         boolean check;
-        for (int i = 0; i < e.length; i++) {
+
+        check = true;
+        while (check) {
             check = false;
-            while (check) {
-                e[i].setPositionX(random.nextInt(g.getWidth()));
-                e[i].setPositionY(random.nextInt(g.getHeight()));
+            e.setPositionX(random.nextInt(g.getWidth()));
+            e.setPositionY(random.nextInt(g.getHeight()));
+            if (!coords.isEmpty()) {
                 for (int j = 0; j < coords.size(); j++) {
-                    if (coords.get(j)[0] == e[i].getPositionX() && coords.get(j)[1] == e[i].getPositionY()) {
+                    if (coords.get(j)[0] == e.getPositionX() && coords.get(j)[1] == e.getPositionY()) {
                         check = true;
                     }
                 }
+                
 
             }
-            int[] currentCoord = new int[2];
-            currentCoord[0] = e[i].getPositionX();
-            currentCoord[1] = e[i].getPositionY();
-            coords.add(currentCoord);
-
         }
+        int[] currentCoord = new int[2];
+        currentCoord[0] = e.getPositionX();
+        currentCoord[1] = e.getPositionY();
+        coords.add(currentCoord);
+
     }
 
     public void init(Grid g) {
-          assignCoords(g, (Entity []) enemies.toArray());
-          assignCoords(g, (Entity []) traps.toArray());
-          assignCoords(g, (Entity []) treasures.toArray());
+
+        for (int i = 0; i < numberOfEnemies; i++) {
+
+            enemies.add(new Enemy('E', 1, 1, true));
+            assignCoords(g, enemies.get(i));
+
+        }
+        for (int i = 0; i < numberOfTreasures; i++) {
+
+            treasures.add(new Treasure('T', 1, true));
+            assignCoords(g, treasures.get(i));
+
+        }
+
+        for (int i = 0; i < numberOfTraps; i++) {
+
+            traps.add(new Trap('X', 1, true));
+            assignCoords(g, traps.get(i));
+
+        }
     }
 
     public void runGame() {
         playgame = true;
         Grid grid = new Grid(15, 15, '.');
+
+        init(grid);
+updateChars(grid);
         while (playgame) {
             grid.print();
             printStats(player);
             update(grid);
+            updateChars(grid);
             if (player.getTreasuresCollected() >= treasures.size() / 2) {
                 endGame(false);
             }

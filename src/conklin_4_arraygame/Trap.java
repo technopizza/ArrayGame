@@ -12,11 +12,9 @@ package conklin_4_arraygame;
 public class Trap extends Entity{
     private int damage;
 
-    public Trap(char symbol, int damage, int positionX, int positionY, boolean alive) {
+    public Trap(char symbol, int damage, boolean alive) {
         this.symbol = symbol;
         this.damage = damage;
-        this.positionX = positionX;
-        this.positionY = positionY;
         this.alive = true;
     }
 

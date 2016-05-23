@@ -12,11 +12,9 @@ package conklin_4_arraygame;
 public class Treasure extends Entity {
     private int score;
 
-    public Treasure(char symbol, int score, int positionX, int positionY, boolean alive) {
+    public Treasure(char symbol, int score, boolean alive) {
         this.symbol = symbol;
         this.score = score;
-        this.positionX = positionX;
-        this.positionY = positionY;
         this.alive = true;
     }
 

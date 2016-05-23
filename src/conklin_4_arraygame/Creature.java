@@ -18,10 +18,8 @@ public class Creature extends Entity {
     private int damage;
     
 
-    public Creature(char symbol, int health, int damage, int positionX, int positionY, boolean alive) {
+    public Creature(char symbol, int health, int damage, boolean alive) {
         this.symbol = symbol;
-        this.positionX = positionX;
-        this.positionY = positionY;
         this.health = health;
         this.damage = damage;
         this.alive = alive;

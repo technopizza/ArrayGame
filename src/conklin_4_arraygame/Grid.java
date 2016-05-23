@@ -21,15 +21,21 @@ public class Grid {
         this.height = height;
         this.fillChar = fillChar;
         gridMap = new char[width][height];
+        for (int i = 0; i < gridMap.length; i++) {
+            for (int j = 0; j < gridMap[i].length; j++) {
+                gridMap[i][j] = fillChar;
+            }
+            
+        }
     }
 
     public void print() {
         System.out.print("┏");
         for (int i = 0; i < gridMap.length; i++) {
-            System.out.print("═");
+            System.out.print("━━");
 
         }
-        System.out.print("┓\n");
+        System.out.print("┓");
 
         for (int i = 0; i < gridMap.length; i++) {
             System.out.println();
@@ -40,9 +46,9 @@ public class Grid {
             System.out.print("┃");
         }
 
-        System.out.print("┗");
+        System.out.print("\n┗");
         for (int i = 0; i < gridMap.length; i++) {
-            System.out.print("━");
+            System.out.print("━━");
 
         }
         System.out.print("┛\n");
