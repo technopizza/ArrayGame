@@ -20,24 +20,24 @@ public abstract class Entity {
         for (int i = 0; i < direction.length; i++) {
             switch (direction[i]) {
                 case 'N':
-                    if (!((getPositionY() - 1) < 0)) {
-                        setPositionY(getPositionY() - 1);
+                    if (!((getPositionX() - 1) < 0)) {
+                        setPositionX(getPositionX() - 1);
                     }
 
                     break;
                 case 'S':
-                    if (!((getPositionY() + 1) > grid.getHeight() - 1)) {
-                        setPositionY(getPositionY() + 1);
-                    }
-                    break;
-                case 'E':
-                    if (!((getPositionX() + 1) > grid.getWidth() - 1)) {
+                    if (!((getPositionX() + 1) > grid.getHeight() - 1)) {
                         setPositionX(getPositionX() + 1);
                     }
                     break;
+                case 'E':
+                    if (!((getPositionY() + 1) > grid.getWidth() - 1)) {
+                        setPositionY(getPositionY() + 1);
+                    }
+                    break;
                 case 'W':
-                    if (!((getPositionX() - 1) < 0)) {
-                        setPositionX(getPositionX() - 1);
+                    if (!((getPositionY() - 1) < 0)) {
+                        setPositionY(getPositionY() - 1);
                     }
                     break;
                 default:

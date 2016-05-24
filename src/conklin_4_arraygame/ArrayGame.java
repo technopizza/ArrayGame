@@ -19,11 +19,11 @@ public class ArrayGame {
     Random random = new Random();
     boolean playgame;
 
-    int numberOfEnemies = 10;
+    int numberOfEnemies = 2;
     int numberOfTraps = 10;
     int numberOfTreasures = 10;
 
-    Player player = new Player('@', 5, 1, true);
+    Player player = new Player('☺', 5, 1, true);
     ArrayList<Enemy> enemies = new ArrayList();
     ArrayList<Trap> traps = new ArrayList();
     ArrayList<Treasure> treasures = new ArrayList();
@@ -40,14 +40,30 @@ public class ArrayGame {
         for (int i = 0; i < entities.size(); i++) {
             entities.get(i).move(g, direction);
         }
+        
 
     }
 
+    
+    
     public void updatePositions(Grid g, Entity entity) {
 
         if (entity.isAlive()) {
             g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
         }
+        //g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
+
+    }
+    
+    public void updatePositions(Grid g, Creature entity) {
+
+        if (entity.isAlive()) {
+            g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
+        }
+        if(!(entity.getPositionXPrevious() == entity.getPositionX() && entity.getPositionYPrevious() == entity.getPositionY())){
+            g.setCharAt(entity.getPositionXPrevious(), entity.getPositionYPrevious(), g.getFillChar());
+        }
+        
 
     }
 
@@ -90,6 +106,23 @@ public class ArrayGame {
     }
 
     public void calculateDamage(Player player, ArrayList<Enemy> enemies, ArrayList<Trap> traps) {
+        
+        
+        for (int j = 0; j < traps.size(); j++) {
+                if (isIntersect(traps.get(j), player)) {
+                    traps.get(j).setAlive(false);
+                    player.setHealth(player.getHealth() - traps.get(j).getDamage());
+                }
+
+            }
+            for (int j = 0; j < treasures.size(); j++) {
+                if (isIntersect(treasures.get(j), player)) {
+                    treasures.get(j).setAlive(false);
+                    player.setTreasuresCollected(player.getTreasuresCollected() + 1);
+                }
+
+            }
+        
         for (int i = 0; i < enemies.size(); i++) {
             if (isIntersect(player, enemies.get(i))) {
                 enemies.get(i).setAlive(false);
@@ -99,6 +132,13 @@ public class ArrayGame {
                 if (isIntersect(traps.get(j), enemies.get(i))) {
                     traps.get(j).setAlive(false);
                     enemies.get(i).setHealth(enemies.get(i).getHealth() - traps.get(j).getDamage());
+                }
+
+            }
+            for (int j = 0; j < treasures.size(); j++) {
+                if (isIntersect(treasures.get(j), enemies.get(i))) {
+                    treasures.get(j).setAlive(false);
+                    
                 }
 
             }
@@ -124,7 +164,7 @@ public class ArrayGame {
 
         
 
-        g.setCharAt(player.getPositionX(), player.getPositionY(), player.getSymbol());
+        updatePositions(g, player);
         for (int i = 0; i < numberOfEnemies; i++) {
 
             updatePositions(g, enemies.get(i));
@@ -191,22 +231,24 @@ public class ArrayGame {
 
     public void init(Grid g) {
 
+        assignCoords(g, player);
+        
         for (int i = 0; i < numberOfEnemies; i++) {
 
-            enemies.add(new Enemy('E', 1, 1, true));
+            enemies.add(new Enemy('▲', 1, 1, true));
             assignCoords(g, enemies.get(i));
 
         }
         for (int i = 0; i < numberOfTreasures; i++) {
 
-            treasures.add(new Treasure('T', 1, true));
+            treasures.add(new Treasure('⚑', 1, true));
             assignCoords(g, treasures.get(i));
 
         }
 
         for (int i = 0; i < numberOfTraps; i++) {
 
-            traps.add(new Trap('X', 1, true));
+            traps.add(new Trap('☒', 1, true));
             assignCoords(g, traps.get(i));
 
         }
@@ -214,7 +256,7 @@ public class ArrayGame {
 
     public void runGame() {
         playgame = true;
-        Grid grid = new Grid(15, 15, '.');
+        Grid grid = new Grid(15, 15, '□');
 
         init(grid);
 updateChars(grid);
