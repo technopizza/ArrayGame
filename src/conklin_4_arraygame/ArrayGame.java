@@ -22,11 +22,15 @@ public class ArrayGame {
     int numberOfEnemies = 2;
     int numberOfTraps = 10;
     int numberOfTreasures = 10;
+    int numberOfWalls = 10;
+    int numberOfPotions = 3;
 
-    Player player = new Player('☺', 5, 1, true);
+    Player player = new Player('⬤', 5, 1, true);
     ArrayList<Enemy> enemies = new ArrayList();
     ArrayList<Trap> traps = new ArrayList();
     ArrayList<Treasure> treasures = new ArrayList();
+    ArrayList<Treasure> healthPotion = new ArrayList();
+    ArrayList<Wall> walls = new ArrayList();
     ArrayList<int[]> coords = new ArrayList();
 
     public static void printEmptyLines(int n) {
@@ -77,14 +81,14 @@ public class ArrayGame {
     public char[] getFollowDirection(Entity player, Entity enemy) {
         String direction = "";
         if (player.getPositionX() > enemy.getPositionX()) {
-            direction += "E";
+            direction += "S";
         } else if (player.getPositionX() < enemy.getPositionX()) {
-            direction += "W";
+            direction += "N";
         }
         if (player.getPositionY() > enemy.getPositionY()) {
-            direction += "S";
+            direction += "E";
         } else if (player.getPositionY() < enemy.getPositionY()) {
-            direction += "N";
+            direction += "W";
         }
 
         return direction.toCharArray();
@@ -106,7 +110,13 @@ public class ArrayGame {
     }
 
     public void calculateDamage(Player player, ArrayList<Enemy> enemies, ArrayList<Trap> traps) {
-        
+        for (int j = 0; j < walls.size(); j++) {
+                if (isIntersect(walls.get(j), player)) {
+                    player.setPositionX(player.getPositionXPrevious());
+                    player.setPositionY(player.getPositionYPrevious());
+                }
+
+            }
         
         for (int j = 0; j < traps.size(); j++) {
                 if (isIntersect(traps.get(j), player)) {
@@ -122,11 +132,29 @@ public class ArrayGame {
                 }
 
             }
+            for (int j = 0; j < healthPotion.size(); j++) {
+                if (isIntersect(healthPotion.get(j), player)) {
+                    healthPotion.get(j).setAlive(false);
+                    player.setHealth(player.getHealth() + healthPotion.get(j).getScore());
+                }
+
+            }
         
         for (int i = 0; i < enemies.size(); i++) {
             if (isIntersect(player, enemies.get(i))) {
                 enemies.get(i).setAlive(false);
                 player.setHealth(player.getHealth() - enemies.get(i).getDamage());
+                player.setEnemiesKilled(player.getEnemiesKilled() + 1);
+            }
+            for (int j = 0; j < enemies.size(); j++) {
+                if(i == j){
+                    continue;
+                }
+                if (isIntersect(enemies.get(j), enemies.get(i))) {
+                    enemies.get(j).setPositionX(enemies.get(j).getPositionXPrevious());
+                    enemies.get(j).setPositionY(enemies.get(j).getPositionYPrevious());
+                }
+
             }
             for (int j = 0; j < traps.size(); j++) {
                 if (isIntersect(traps.get(j), enemies.get(i))) {
@@ -139,6 +167,13 @@ public class ArrayGame {
                 if (isIntersect(treasures.get(j), enemies.get(i))) {
                     treasures.get(j).setAlive(false);
                     
+                }
+
+            }
+            for (int j = 0; j < walls.size(); j++) {
+                if (isIntersect(walls.get(j), enemies.get(i))) {
+                    enemies.get(i).setPositionX(enemies.get(i).getPositionXPrevious());
+                    enemies.get(i).setPositionY(enemies.get(i).getPositionYPrevious());
                 }
 
             }
@@ -165,6 +200,15 @@ public class ArrayGame {
         
 
         updatePositions(g, player);
+        
+        for (int i = 0; i < numberOfWalls; i++) {
+
+            updatePositions(g, walls.get(i));
+
+        }
+        
+        
+        
         for (int i = 0; i < numberOfEnemies; i++) {
 
             updatePositions(g, enemies.get(i));
@@ -179,6 +223,11 @@ public class ArrayGame {
         for (int i = 0; i < numberOfTraps; i++) {
 
             updatePositions(g, traps.get(i));
+
+        }
+        for (int i = 0; i < numberOfPotions; i++) {
+
+            updatePositions(g, healthPotion.get(i));
 
         }
     }
@@ -233,6 +282,13 @@ public class ArrayGame {
 
         assignCoords(g, player);
         
+        for (int i = 0; i < numberOfWalls; i++) {
+
+            walls.add(new Wall('◼', true));
+            assignCoords(g, walls.get(i));
+
+        }
+        
         for (int i = 0; i < numberOfEnemies; i++) {
 
             enemies.add(new Enemy('▲', 1, 1, true));
@@ -250,6 +306,12 @@ public class ArrayGame {
 
             traps.add(new Trap('☒', 1, true));
             assignCoords(g, traps.get(i));
+
+        }
+        for (int i = 0; i < numberOfPotions; i++) {
+
+            healthPotion.add(new Treasure('♥', 1, true));
+            assignCoords(g, healthPotion.get(i));
 
         }
     }
