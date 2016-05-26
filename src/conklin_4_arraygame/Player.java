@@ -20,6 +20,48 @@ public class Player extends Creature {
         treasuresCollected = 0;
     }
 
+    @Override
+    public void move(Grid grid, char[] direction) {
+        this.setPositionXPrevious(this.getPositionX());
+        this.setPositionYPrevious(this.getPositionY());
+        for (int i = 0; i < direction.length; i++) {
+            switch (direction[i]) {
+                case 'R':
+                    if (this.getTreasuresCollected() > 0) {
+                        this.setTreasuresCollected(this.getTreasuresCollected() - 1);
+
+                        ArrayGame.revealCounter = 5;
+                    }
+
+                    break;
+                case 'N':
+                    if (!((getPositionX() - 1) < 0)) {
+                        setPositionX(getPositionX() - 1);
+                    }
+
+                    break;
+                case 'S':
+                    if (!((getPositionX() + 1) > grid.getHeight() - 1)) {
+                        setPositionX(getPositionX() + 1);
+                    }
+                    break;
+                case 'E':
+                    if (!((getPositionY() + 1) > grid.getWidth() - 1)) {
+                        setPositionY(getPositionY() + 1);
+                    }
+                    break;
+                case 'W':
+                    if (!((getPositionY() - 1) < 0)) {
+                        setPositionY(getPositionY() - 1);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    }
+
     public int getEnemiesKilled() {
         return enemiesKilled;
     }

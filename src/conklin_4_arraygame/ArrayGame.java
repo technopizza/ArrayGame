@@ -21,6 +21,7 @@ public class ArrayGame {
 
     int numberOfEnemies = 2;
     int numberOfTraps = 10;
+
     int numberOfTreasures = 10;
     int numberOfWalls = 10;
     int numberOfPotions = 3;
@@ -44,12 +45,9 @@ public class ArrayGame {
         for (int i = 0; i < entities.size(); i++) {
             entities.get(i).move(g, direction);
         }
-        
 
     }
 
-    
-    
     public void updatePositions(Grid g, Entity entity) {
 
         if (entity.isAlive()) {
@@ -58,16 +56,15 @@ public class ArrayGame {
         //g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
 
     }
-    
+
     public void updatePositions(Grid g, Creature entity) {
 
         if (entity.isAlive()) {
             g.setCharAt(entity.getPositionX(), entity.getPositionY(), entity.getSymbol());
         }
-        if(!(entity.getPositionXPrevious() == entity.getPositionX() && entity.getPositionYPrevious() == entity.getPositionY())){
+        if (!(entity.getPositionXPrevious() == entity.getPositionX() && entity.getPositionYPrevious() == entity.getPositionY())) {
             g.setCharAt(entity.getPositionXPrevious(), entity.getPositionYPrevious(), g.getFillChar());
         }
-        
 
     }
 
@@ -95,10 +92,9 @@ public class ArrayGame {
     }
 
     public void squadMovement(Grid g, Entity player, Entity squadmember) {
-        
-            squadmember.move(g, getFollowDirection(player, squadmember));
 
-        
+        squadmember.move(g, getFollowDirection(player, squadmember));
+
     }
 
     public boolean isIntersect(Entity entity1, Entity entity2) {
@@ -110,36 +106,37 @@ public class ArrayGame {
     }
 
     public void calculateDamage(Player player, ArrayList<Enemy> enemies, ArrayList<Trap> traps) {
+
         for (int j = 0; j < walls.size(); j++) {
-                if (isIntersect(walls.get(j), player)) {
-                    player.setPositionX(player.getPositionXPrevious());
-                    player.setPositionY(player.getPositionYPrevious());
-                }
-
+            if (isIntersect(walls.get(j), player)) {
+                player.setPositionX(player.getPositionXPrevious());
+                player.setPositionY(player.getPositionYPrevious());
             }
-        
+
+        }
+
         for (int j = 0; j < traps.size(); j++) {
-                if (isIntersect(traps.get(j), player)) {
-                    traps.get(j).setAlive(false);
-                    player.setHealth(player.getHealth() - traps.get(j).getDamage());
-                }
-
+            if (isIntersect(traps.get(j), player)) {
+                traps.get(j).setAlive(false);
+                player.setHealth(player.getHealth() - traps.get(j).getDamage());
             }
-            for (int j = 0; j < treasures.size(); j++) {
-                if (isIntersect(treasures.get(j), player)) {
-                    treasures.get(j).setAlive(false);
-                    player.setTreasuresCollected(player.getTreasuresCollected() + 1);
-                }
 
+        }
+        for (int j = 0; j < treasures.size(); j++) {
+            if (isIntersect(treasures.get(j), player)) {
+                treasures.get(j).setAlive(false);
+                player.setTreasuresCollected(player.getTreasuresCollected() + 1);
             }
-            for (int j = 0; j < healthPotion.size(); j++) {
-                if (isIntersect(healthPotion.get(j), player)) {
-                    healthPotion.get(j).setAlive(false);
-                    player.setHealth(player.getHealth() + healthPotion.get(j).getScore());
-                }
 
+        }
+        for (int j = 0; j < healthPotion.size(); j++) {
+            if (isIntersect(healthPotion.get(j), player)) {
+                healthPotion.get(j).setAlive(false);
+                player.setHealth(player.getHealth() + healthPotion.get(j).getScore());
             }
-        
+
+        }
+
         for (int i = 0; i < enemies.size(); i++) {
             if (isIntersect(player, enemies.get(i))) {
                 enemies.get(i).setAlive(false);
@@ -147,7 +144,7 @@ public class ArrayGame {
                 player.setEnemiesKilled(player.getEnemiesKilled() + 1);
             }
             for (int j = 0; j < enemies.size(); j++) {
-                if(i == j){
+                if (i == j) {
                     continue;
                 }
                 if (isIntersect(enemies.get(j), enemies.get(i))) {
@@ -166,7 +163,7 @@ public class ArrayGame {
             for (int j = 0; j < treasures.size(); j++) {
                 if (isIntersect(treasures.get(j), enemies.get(i))) {
                     treasures.get(j).setAlive(false);
-                    
+
                 }
 
             }
@@ -181,34 +178,61 @@ public class ArrayGame {
         }
     }
 
+    public void revealAllHiddenTraps(Grid g) {
+        for (int i = 0; i < traps.size(); i++) {
+            if (traps.get(i).isHidden()) {
+                traps.get(i).setSymbol('☒');
+            }
+
+        }
+    }
+
+    public void hideAllHiddenTraps(Grid g) {
+        for (int i = 0; i < traps.size(); i++) {
+            if (traps.get(i).isHidden()) {
+                traps.get(i).setSymbol(g.getFillChar());
+            }
+
+        }
+    }
+
+    public void hiddenTrapsProximityReveal(Grid g, Player p) {
+
+        for (int i = 0; i < traps.size(); i++) {
+
+            if (traps.get(i).isHidden()) {
+                if (((Math.abs(traps.get(i).getPositionX() - p.getPositionX())) <= 1) && ((Math.abs(traps.get(i).getPositionY() - p.getPositionY())) <= 1)) {
+                    traps.get(i).setSymbol('☒');
+                }
+            }
+
+        }
+    }
+
     public void update(Grid g) {
 
         char[] direction = userInputDirection();
         player.move(g, direction);
         for (int i = 0; i < numberOfEnemies; i++) {
             squadMovement(g, player, enemies.get(i));
-            
+
         }
-        
+        hiddenTrapsProximityReveal(g, player);
+
         calculateDamage(player, enemies, traps);
 
-        
     }
 
     public void updateChars(Grid g) {
 
-        
-
         updatePositions(g, player);
-        
+
         for (int i = 0; i < numberOfWalls; i++) {
 
             updatePositions(g, walls.get(i));
 
         }
-        
-        
-        
+
         for (int i = 0; i < numberOfEnemies; i++) {
 
             updatePositions(g, enemies.get(i));
@@ -231,7 +255,7 @@ public class ArrayGame {
 
         }
     }
-    
+
     public void endGame(boolean win) {
         printEmptyLines(10);
         if (win) {
@@ -267,7 +291,6 @@ public class ArrayGame {
                         check = true;
                     }
                 }
-                
 
             }
         }
@@ -281,14 +304,14 @@ public class ArrayGame {
     public void init(Grid g) {
 
         assignCoords(g, player);
-        
+
         for (int i = 0; i < numberOfWalls; i++) {
 
             walls.add(new Wall('◼', true));
             assignCoords(g, walls.get(i));
 
         }
-        
+
         for (int i = 0; i < numberOfEnemies; i++) {
 
             enemies.add(new Enemy('▲', 1, 1, true));
@@ -304,7 +327,10 @@ public class ArrayGame {
 
         for (int i = 0; i < numberOfTraps; i++) {
 
-            traps.add(new Trap('☒', 1, true));
+            traps.add(new Trap('☒', 1, random.nextBoolean(), true));
+            if (traps.get(i).isHidden()) {
+                traps.get(i).setSymbol(g.getFillChar());
+            }
             assignCoords(g, traps.get(i));
 
         }
@@ -315,17 +341,24 @@ public class ArrayGame {
 
         }
     }
+    static int revealCounter = 0;
 
     public void runGame() {
         playgame = true;
         Grid grid = new Grid(15, 15, '□');
 
         init(grid);
-updateChars(grid);
+        updateChars(grid);
         while (playgame) {
             grid.print();
             printStats(player);
             update(grid);
+            if (revealCounter > 0) {
+                revealAllHiddenTraps(grid);
+                revealCounter--;
+            } else if (revealCounter <= 0) {
+                hideAllHiddenTraps(grid);
+            }
             updateChars(grid);
             if (player.getTreasuresCollected() >= treasures.size() / 2) {
                 endGame(false);
